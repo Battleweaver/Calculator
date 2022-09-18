@@ -6,36 +6,36 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    public static String calc(String input) throws IOException {
+    public static String calc(String input) throws IOException, IllegalArgumentException {
 
-        boolean romanOtput = false;
-        String operators[];
-        int agregate;
-        String result;
-
-        //Checking if string contains symbols other than numbers and operands
-        if (!input.matches(".[0-9|M|D|C|L|X|V|I|\\*|\\+|\\/|\\-| ]*")) {
-            throw new IOException("Only arabic OR roman numbers are allowed. Strictly arabic or strictly roman.");
-        }
         //Checking if we have any fractional arabic number
         if(input.contains(".")) {
             throw new IOException("Only integer values are allowed.");
         }
+        //Checking if string contains symbols other than numbers and operands
+        if (!input.matches(".[0-9|M|D|C|L|X|V|I|\\*|\\+|\\/|\\-| ]*")) {
+            throw new IOException("Only arabic OR roman numbers are allowed.");
+        }
+
+        boolean romanOtput = false;
+        String operands[];
+        int agregate;
+        String result;
 
         //Concidering checks above, removes spaces. Without them removes all special symbols like /n, /t
         input = input.replaceAll("\\s+","");
 
-        String operands[]=input.split("[\\*\\+\\/\\-]");
+        String operators[]=input.split("[0-9|M|D|C|L|X|V|I]+");
 
         //Checking if we have more than one arithmetical operations
-        if (operands.length != 2) {
-            throw new IOException("Only one operand is allowed.");
+        if (operators.length != 2) {
+            throw new IOException("Only one operator is allowed.");
         }
 
-        if (input.matches(".[M|D|C|L|X|V|I]*")) {
+        if (input.matches("[M|D|C|L|X|V|I\\*\\+\\/\\-]+")) {
             romanOtput = true;
-            operators=input.split("[M|D|C|L|X|V|I]+");
-            agregate = RomanNumber.romanToArabic(operands[0]);;
+            operands=input.split("[\\*\\+\\/\\-]+");
+            agregate = RomanNumber.romanToArabic(operands[0]);
 
             for(int i=1;i<operands.length;i++){
                 switch (operators[i]) {
@@ -55,8 +55,8 @@ public class Main {
 
             }
 
-        } else {
-            operators=input.split("[0-9]+");
+        } else if (input.matches("[0-9\\*\\+\\/\\-]+")){
+            operands =input.split("[\\*\\+\\/\\-]+");
             agregate = Integer.parseInt(operands[0]);
 
             for(int i=1;i<operands.length;i++){
@@ -76,6 +76,8 @@ public class Main {
                 }
 
             }
+        } else {
+            throw new IOException("Only arabic OR roman numbers are allowed. Strictly arabic or strictly roman.");
         }
 
 
@@ -89,8 +91,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            System.out.println(calc("L + M"));
-        } catch (IOException e) {
+            System.out.println(calc("I - II"));
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
@@ -124,7 +126,7 @@ class RomanNumber {
         return result;
     }
 
-    static String arabicToRoman(int number) {
+    static String arabicToRoman(int number) throws IllegalArgumentException {
         if ((number <= 0) || (number > 4000)) {
             throw new IllegalArgumentException(number + " is not in range (0,4000]");
         }
