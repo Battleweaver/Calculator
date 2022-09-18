@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -90,8 +92,11 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         try {
-            System.out.println(calc("I - II"));
+            String input = br.readLine();
+            System.out.println(calc(input));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
